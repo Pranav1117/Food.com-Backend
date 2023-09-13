@@ -19,11 +19,11 @@ const user = new mongoose.Schema({
     //     required: true,
     //   },
     //   mealType: {
-    //     type: [String], 
+    //     type: [String],
     //     required: true,
     //   },
     //   cuisineType: {
-    //     type: [String], 
+    //     type: [String],
     //     required: true,
     //   },
     //   label: {
@@ -38,8 +38,6 @@ const user = new mongoose.Schema({
     //     type: String,
     //     required: true,
     //   },
-
-    
     //   calories: {
     //     type: Number,
     //     required: true,
@@ -52,28 +50,22 @@ const user = new mongoose.Schema({
     //     type: Number,
     //     required: true,
     //   },
-
-     
     //   dietLabels: {
-    //     type: [String], 
+    //     type: [String],
     //     required: true,
     //   },
     //   healthLabels: {
-    //     type: [String], 
+    //     type: [String],
     //     required: true,
     //   },
     //   cautions: {
     //     type: [String],
     //     required: true,
     //   },
-
-      
     //   ingredientLines: {
-    //     type: [String], 
+    //     type: [String],
     //     required: true,
     //   },
-
-     
     //   source: {
     //     type: String,
     //     required: true,
@@ -100,6 +92,10 @@ const user = new mongoose.Schema({
     //   },
     // },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const User = mongoose.model("User", user);

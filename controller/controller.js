@@ -108,12 +108,15 @@ const Register = async (req, res) => {
   // });
 
   const { email, password } = req.body;
-
   const User1 = await User.findOne({ email });
-  // console.log(User, "user msgggg");
+  // console.log(User1.email === email, "user msgggg");
 
-  if (User1) {
-    return res.send({ msg: "User already registered" });
+  if (User1 && User1.email === email) {
+    console.log("in exist");
+    return res.send({
+      msg: "User already exists, please try a different user or login",
+      token: null,
+    });
   }
 
   const hashPass = bcrypt.hashSync(password, 10);
@@ -180,28 +183,30 @@ const Login = async (req, res) => {
 };
 
 const checkLoggedIn = async (req, res) => {
-  const data = req.headers;
-  const token1 = data.authorization.split(" ")[1];
-
-  const token = token1;
   const currentTime = Math.floor(Date.now() / 1000);
 
-  if (!token) {
-    return res.send({ msg: "Please Login", isLoggedIn: false });
-  }
+  const data = req.headers;
+  const token = data.authorization.split(" ")[1];
+  console.log(data.authorization.split(" ")[1], "sssssss---------------");
 
-  try {
-    const { exp, email } = jwt.verify(token, SECRET_KEY);
+  if (token) {
+    // const token1 = data.authorization.split(" ")[1];
 
-    if (email && exp > currentTime) {
-      return res.send({ msg: "User is already logged in", isLoggedIn: true });
-    } else {
-      return res.send({ msg: "Session expired", isLoggedIn: false });
+    // const token = token1;
+    try {
+      const { exp, email } = jwt.verify(token, SECRET_KEY);
+
+      if (email && exp > currentTime) {
+        return res.send({ msg: "User is already logged in", isLoggedIn: true });
+      } else {
+        return res.send({ msg: "Session expired", isLoggedIn: false });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.send({ msg: "something went wrong", isLoggedIn: false });
     }
-  } catch (err) {
-    console.log(err);
-    return res.send({ msg: "something went wrong", isLoggedIn: false });
   }
+  return res.send({ msg: "Please Login", isLoggedIn: false });
 };
 
 const logOut = (req, res) => {
@@ -242,7 +247,12 @@ const saveRecipe = async (req, res) => {
 const getSavedRecipe = async (req, res) => {
   const user1 = await getUser(req.headers);
 
-  return res.send({ saved: user1.saved_recipes });
+  return res.send({ saved: user1 });
+};
+
+const getUserData = async (req, res) => {
+  const user1 = await getUser(req.headers);
+  return res.send({ User: user1 });
 };
 
 module.exports = {
@@ -252,5 +262,6 @@ module.exports = {
   logOut,
   saveRecipe,
   getSavedRecipe,
-  getComments
+  getComments,
+  getUserData,
 };
