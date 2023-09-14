@@ -230,24 +230,51 @@ const logOut = (req, res) => {
 };
 
 const saveRecipe = async (req, res) => {
-  const data = req.body;
+  const data = await req.body;
+
   const User1 = await getUser(req.headers);
+
+  console.log("--------------", "saaassa");
   console.log(User1);
+  const t = await User.findOne({
+    "saved_recipes.label": data.label,
+  });
+  console.log(t);
+
+  console.log("first");
   if (User1) {
-    // const res1 = await User1.saved_recipes.push(data);
-    // return res.send({ res1: res1 });
     const w = await User1.updateOne({
       $push: { saved_recipes: data },
     });
-    return res.send({ res: w });
+
+    return res.send({ res: w, isSaved: true });
   }
-  return res.send("nottttt");
+  return res.send({ msg: "not saved", isSaved: false });
 };
 
 const getSavedRecipe = async (req, res) => {
   const user1 = await getUser(req.headers);
-
+  console.log(user1, "------------in getsavedrecipe");
   return res.send({ saved: user1 });
+};
+
+const removeSavedRecipe = async (req, res) => {
+  const user1 = await getUser(req.headers);
+  const data = await req.body;
+  // const s = await User.deleteMany({ saved_recipes: label });
+
+  console.log(data.label, "data in req.body");
+  const recipeIndex = user1.saved_recipes.findIndex(
+    (recipe) => recipe.label === data.label
+  );
+  console.log(recipeIndex);
+
+  // Remove the recipe object from the saved_recipes array
+  user1.saved_recipes.splice(recipeIndex, 1);
+
+  // Save the updated user document
+  const result = await user1.save();
+  return res.send({ result: result });
 };
 
 const getUserData = async (req, res) => {
@@ -264,4 +291,5 @@ module.exports = {
   getSavedRecipe,
   getComments,
   getUserData,
+  removeSavedRecipe,
 };

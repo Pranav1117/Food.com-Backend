@@ -20,7 +20,7 @@ const getUser = async (header) => {
     }
   }
 
-  return null;
+  return "null not found";
 };
 
 module.exports = { getUser };

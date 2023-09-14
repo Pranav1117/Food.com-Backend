@@ -9,6 +9,7 @@ const {
   getSavedRecipe,
   getComments,
   getUserData,
+  removeSavedRecipe,
 } = require("../controller/controller");
 
 const auth = require("../middleware/auth");
@@ -28,5 +29,7 @@ route.get("/getsaveredcipe", getSavedRecipe);
 route.get("/getcomments", getComments);
 
 route.get("/getuserdata", getUserData);
+
+route.put("/deleterecipe", removeSavedRecipe);
 
 module.exports = route;
