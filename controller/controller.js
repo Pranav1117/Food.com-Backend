@@ -231,18 +231,29 @@ const logOut = (req, res) => {
 
 const saveRecipe = async (req, res) => {
   const data = await req.body;
-
+  // console.log(data);
   const User1 = await getUser(req.headers);
 
   console.log("--------------", "saaassa");
-  console.log(User1);
+
   const t = await User.findOne({
     "saved_recipes.label": data.label,
   });
-  console.log(t);
+  console.log(t, "tttttttttttttttttttttttttt");
+  let recipeAlreadyBook = false;
 
-  console.log("first");
+  if (t && t.saved_recipes.length > 0) {
+    t.saved_recipes.forEach((recipe) => {
+      if (recipe.hasOwnProperty("label")) {
+        recipeAlreadyBook = true;
+      }
+    });
+  }
   if (User1) {
+    if (recipeAlreadyBook) {
+      return res.send({ msg: "recipe already bookmarked", isSaved: false });
+    }
+
     const w = await User1.updateOne({
       $push: { saved_recipes: data },
     });
