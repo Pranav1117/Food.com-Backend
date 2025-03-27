@@ -82,37 +82,11 @@ const getComments = async (req, res) => {
 };
 
 const Register = async (req, res) => {
-  // const { email, password } = req.body;
-
-  // const isExist = await User.findOne({ email });
-  // console.log(isExist, "-----------------exist");
-
-  // if (isExist) {
-  //   return res.send({ msg: "User Already Exists" });
-  // }
-
-  // const hashPass = bcrypt.hashSync(password, 10);
-
-  // const tempObj = new User({
-  //   email: email,
-  //   password: hashPass,
-  // });
-
-  // await tempObj.save();
-  // const token = jwt.sign({ email: email }, SECRET_KEY, { expiresIn: "3D" });
-
-  // return res.send({
-  //   msg: "User registred successfully",
-  //   isLoggedIn: true,
-  //   token: token,
-  // });
 
   const { email, password } = req.body;
   const User1 = await User.findOne({ email });
-  // console.log(User1.email === email, "user msgggg");
 
   if (User1 && User1.email === email) {
-    console.log("in exist");
     return res.send({
       msg: "User already exists, please try a different user or login",
       token: null,
@@ -140,7 +114,6 @@ const Register = async (req, res) => {
 
 const Login = async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email, password);
   const isExist = await User.findOne({ email: email });
 
   if (!isExist) {
@@ -152,12 +125,9 @@ const Login = async (req, res) => {
   }
 
   try {
-    console.log(typeof password, "------------pass");
-
     const isVerified = bcrypt.compareSync(password, isExist.password);
 
     if (isVerified) {
-      console.log(isVerified);
       const token = jwt.sign({ email: email }, SECRET_KEY, { expiresIn: "3D" });
 
       return res.send({
@@ -187,12 +157,8 @@ const checkLoggedIn = async (req, res) => {
 
   const data = req.headers;
   const token = data.authorization.split(" ")[1];
-  console.log(data.authorization.split(" ")[1], "sssssss---------------");
 
   if (token) {
-    // const token1 = data.authorization.split(" ")[1];
-
-    // const token = token1;
     try {
       const { exp, email } = jwt.verify(token, SECRET_KEY);
 
@@ -212,10 +178,6 @@ const checkLoggedIn = async (req, res) => {
 const logOut = (req, res) => {
   try {
     const { authorization } = req.headers;
-
-    const token = authorization.split(" ")[1];
-    console.log(token);
-
     return res.send({
       msg: "Logged Out Succesfully",
       token: null,
@@ -231,15 +193,11 @@ const logOut = (req, res) => {
 
 const saveRecipe = async (req, res) => {
   const data = await req.body;
-  // console.log(data);
   const User1 = await getUser(req.headers);
-
-  console.log("--------------", "saaassa");
 
   const t = await User.findOne({
     "saved_recipes.label": data.label,
   });
-  console.log(t, "tttttttttttttttttttttttttt");
   let recipeAlreadyBook = false;
 
   if (t && t.saved_recipes.length > 0) {
@@ -265,20 +223,16 @@ const saveRecipe = async (req, res) => {
 
 const getSavedRecipe = async (req, res) => {
   const user1 = await getUser(req.headers);
-  console.log(user1, "------------in getsavedrecipe");
   return res.send({ saved: user1 });
 };
 
 const removeSavedRecipe = async (req, res) => {
   const user1 = await getUser(req.headers);
   const data = await req.body;
-  // const s = await User.deleteMany({ saved_recipes: label });
 
-  console.log(data.label, "data in req.body");
   const recipeIndex = user1.saved_recipes.findIndex(
     (recipe) => recipe.label === data.label
   );
-  console.log(recipeIndex);
 
   // Remove the recipe object from the saved_recipes array
   user1.saved_recipes.splice(recipeIndex, 1);

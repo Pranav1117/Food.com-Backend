@@ -3,8 +3,8 @@ const dotenv = require("dotenv");
 const app = express();
 dotenv.config();
 const cors = require("cors");
-// const { data } = require("./controller/controller");
 const route = require("./Routes/routes");
+
 app.use(
   cors({
     origin: "*",
@@ -24,7 +24,6 @@ app.use("/", (req, res) => {
 app.listen(PORT, async () => {
   try {
     await connect();
-    // data();
     console.log(`Running on ${PORT}`);
   } catch (error) {
     console.log(error);

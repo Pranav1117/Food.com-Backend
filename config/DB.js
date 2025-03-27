@@ -8,7 +8,6 @@ const url =
 const connect = async () => {
   try {
     const client = await mongoose.connect(url);
-    console.log("Connected to atlas");
   } catch (err) {
     console.log(err);
   }
